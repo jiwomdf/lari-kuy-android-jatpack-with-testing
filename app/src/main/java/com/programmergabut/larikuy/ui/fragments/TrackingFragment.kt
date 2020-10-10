@@ -6,15 +6,18 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.PolylineOptions
 import com.programmergabut.larikuy.R
 import com.programmergabut.larikuy.other.Constants.ACTION_PAUSE_SERVICE
 import com.programmergabut.larikuy.other.Constants.ACTION_START_OR_RESUME_SERVICE
+import com.programmergabut.larikuy.other.Constants.ACTION_STOP_SERVICE
 import com.programmergabut.larikuy.other.Constants.MAP_ZOOM
 import com.programmergabut.larikuy.other.Constants.POLYLINE_COLOR
 import com.programmergabut.larikuy.other.Constants.POLYLINE_WIDTH
+import com.programmergabut.larikuy.other.TrackingUtility
 import com.programmergabut.larikuy.services.Polyline
 import com.programmergabut.larikuy.services.TrackingService
 import com.programmergabut.larikuy.ui.viewmodels.MainViewModel
@@ -30,6 +33,7 @@ class TrackingFragment: Fragment(R.layout.fragment_tracking) {
     private var pathPoints = mutableListOf<Polyline>()
 
     private var map: GoogleMap? = null
+    private var curTimeInMillis = 0L
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -44,6 +48,10 @@ class TrackingFragment: Fragment(R.layout.fragment_tracking) {
             addAllPolyline()
         }
 
+        btnFinishRun.setOnClickListener {
+            sendCommandToService(ACTION_STOP_SERVICE)
+        }
+
         subscribeToObservers()
     }
 
@@ -56,6 +64,12 @@ class TrackingFragment: Fragment(R.layout.fragment_tracking) {
             pathPoints = it
             addLatestPolyline()
             moveCameraToUser()
+        })
+
+        TrackingService.timeRunInMillis.observe(viewLifecycleOwner, Observer {
+            curTimeInMillis = it
+            val formattedTime = TrackingUtility.getFormattedStopWatchTime(curTimeInMillis, true)
+            tvTimer.text = formattedTime
         })
     }
 
