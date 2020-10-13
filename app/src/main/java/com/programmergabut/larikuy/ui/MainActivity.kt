@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        navigateToSetUpFragmentIfNeeded()
         navigateToTrackingFragmentIfNeeded(intent)
 
         setSupportActionBar(toolbar)
@@ -40,8 +41,14 @@ class MainActivity : AppCompatActivity() {
                     else -> bottomNavigationView.visibility = View.GONE
                 }
             }
+    }
 
+    private fun navigateToSetUpFragmentIfNeeded() {
+        val name = sharedPref.getString(Constants.KEY_NAME, "") ?: ""
+        val weight = sharedPref.getFloat(Constants.KEY_WEIGHT, 0f)
 
+        if(name == "" && weight == 0f)
+            navHostFragment.findNavController().navigate(R.id.setupFragment)
     }
 
     override fun onNewIntent(intent: Intent?) {
