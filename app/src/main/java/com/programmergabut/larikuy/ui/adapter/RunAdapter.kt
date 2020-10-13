@@ -1,4 +1,4 @@
-package com.programmergabut.larikuy.adapter
+package com.programmergabut.larikuy.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.View
