@@ -80,7 +80,11 @@ class StatisticFragment: Fragment(R.layout.fragment_statistic) {
 
         viewModel.totalAvgSpeed.observe(viewLifecycleOwner, Observer {
             it?.let {
-                val avgSpeed = round(it * 10f) / 10f
+                var speed = 0F
+                if(!it.isInfinite())
+                    speed = it
+
+                val avgSpeed = round(speed * 10f) / 10f
                 val avgSpeedString = "${avgSpeed}km/h"
                 tvAverageSpeed.text = avgSpeedString
             }

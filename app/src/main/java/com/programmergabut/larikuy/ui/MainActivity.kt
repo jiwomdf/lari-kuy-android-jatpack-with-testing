@@ -1,18 +1,24 @@
 package com.programmergabut.larikuy.ui
 
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.programmergabut.larikuy.R
+import com.programmergabut.larikuy.other.Constants
 import com.programmergabut.larikuy.other.Constants.ACTION_SHOW_TRACKING_FRAGMENT
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var sharedPref: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +27,7 @@ class MainActivity : AppCompatActivity() {
         navigateToTrackingFragmentIfNeeded(intent)
 
         setSupportActionBar(toolbar)
+        setToolBarName()
         bottomNavigationView.setupWithNavController(navHostFragment.findNavController())
         bottomNavigationView.setOnNavigationItemReselectedListener {
             /* NO-OP */
@@ -33,6 +40,8 @@ class MainActivity : AppCompatActivity() {
                     else -> bottomNavigationView.visibility = View.GONE
                 }
             }
+
+
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -46,4 +55,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun setToolBarName() {
+        tvToolbarTitle.text = "Let's Go ${sharedPref.getString(Constants.KEY_NAME, "Buddy")}"
+    }
 }

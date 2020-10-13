@@ -25,8 +25,6 @@ class SetupFragment: Fragment(R.layout.fragment_setup) {
     @set:Inject
     var isFirstAppOpen = true
 
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -42,7 +40,7 @@ class SetupFragment: Fragment(R.layout.fragment_setup) {
             val success = writePersonalDataToSharedPref()
 
             if(success)
-                findNavController().navigate(R.id.action_setupFragment_to_runFragment)
+                findNavController().navigate(SetupFragmentDirections.actionSetupFragmentToRunFragment())
             else
                 Snackbar.make(requireView(), "Please enter all the fields", Snackbar.LENGTH_SHORT).show()
         }
@@ -61,7 +59,7 @@ class SetupFragment: Fragment(R.layout.fragment_setup) {
             .putBoolean(KEY_FIRST_TIME_TOGGLE, false)
             .apply()
 
-        val toolbartext = "Let's go, $name!"
+        val toolbartext = "Let's Go, $name!"
         requireActivity().tvToolbarTitle.text = toolbartext
         return true
     }

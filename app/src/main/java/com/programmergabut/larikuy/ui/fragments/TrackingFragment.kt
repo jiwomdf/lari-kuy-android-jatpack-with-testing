@@ -1,20 +1,17 @@
 package com.programmergabut.larikuy.ui.fragments
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.programmergabut.larikuy.R
 import com.programmergabut.larikuy.db.Run
 import com.programmergabut.larikuy.other.Constants.ACTION_PAUSE_SERVICE
@@ -86,11 +83,16 @@ class TrackingFragment: Fragment(R.layout.fragment_tracking) {
         }
 
         btnFinishRun.setOnClickListener {
-            val errMsg = zoomToSeeWholeTrack()
-            if(errMsg == SUCCESS)
-                endRunAndSaveToDB()
+            val msg = zoomToSeeWholeTrack()
+            if(msg != SUCCESS)
+                Snackbar.make(requireView(), msg, Snackbar.LENGTH_SHORT).show()
+
+            val msg2 = endRunAndSaveToDB()
+
+            if(msg2 != SUCCESS)
+                Snackbar.make(requireView(), msg2, Snackbar.LENGTH_SHORT).show()
             else
-                Snackbar.make(requireView(), errMsg, Snackbar.LENGTH_SHORT).show()
+                stopRun()
         }
 
         subscribeToObservers()
@@ -161,7 +163,7 @@ class TrackingFragment: Fragment(R.layout.fragment_tracking) {
     private fun stopRun(){
         tvTimer.text = "00:00:00:00"
         sendCommandToService(ACTION_STOP_SERVICE)
-        findNavController().navigate(R.id.action_trackingFragment_to_runFragment)
+        findNavController().navigate(TrackingFragmentDirections.actionTrackingFragmentToRunFragment())
     }
 
     private fun updateTracking(isTracking: Boolean){
@@ -215,8 +217,9 @@ class TrackingFragment: Fragment(R.layout.fragment_tracking) {
         }
     }
 
-    private fun endRunAndSaveToDB(){
-        map?.snapshot {bmp ->
+    private fun endRunAndSaveToDB(): String {
+
+        try {
             var distanceInMeters = 0
             for(polyline in pathPoints){
                 distanceInMeters += TrackingUtility.calculatePolylineLength(polyline).toInt()
@@ -225,18 +228,23 @@ class TrackingFragment: Fragment(R.layout.fragment_tracking) {
             val avgSpeed = round((distanceInMeters / 1000f) / (curTimeInMillis / 1000f / 60 / 60) * 10) / 10f
             val dateTimeStamp = Calendar.getInstance().timeInMillis
             val caloriesBurn = ((distanceInMeters / 1000f) * weight).toInt()
-            val run = Run(bmp, dateTimeStamp, avgSpeed, distanceInMeters, curTimeInMillis, caloriesBurn)
 
-            viewModel.insertRun(run)
+            if(avgSpeed.isInfinite())
+                throw Exception("avgSpeed is infinite")
 
-            Snackbar.make(
-                requireActivity().findViewById(R.id.rootView),
-                "Run save successfully",
-                Snackbar.LENGTH_LONG
-            ).show()
+            map?.snapshot {bmp ->
+                val run = Run(bmp, dateTimeStamp, avgSpeed, distanceInMeters, curTimeInMillis, caloriesBurn)
+                viewModel.insertRun(run)
 
-            stopRun()
+                Snackbar.make(requireActivity().findViewById(R.id.rootView), "Run save successfully", Snackbar.LENGTH_LONG).show()
+            }
+
         }
+        catch (ex: Exception){
+            return ex.message.toString()
+        }
+
+        return SUCCESS
     }
 
     private fun addAllPolyline(){
