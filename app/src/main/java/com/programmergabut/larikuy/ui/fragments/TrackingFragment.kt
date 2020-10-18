@@ -87,12 +87,7 @@ class TrackingFragment: Fragment(R.layout.fragment_tracking) {
             if(msg != SUCCESS)
                 Snackbar.make(requireView(), msg, Snackbar.LENGTH_SHORT).show()
 
-            val msg2 = endRunAndSaveToDB()
-
-            if(msg2 != SUCCESS)
-                Snackbar.make(requireView(), msg2, Snackbar.LENGTH_SHORT).show()
-            else
-                stopRun()
+            endRunAndSaveToDB()
         }
 
         subscribeToObservers()
@@ -217,7 +212,7 @@ class TrackingFragment: Fragment(R.layout.fragment_tracking) {
         }
     }
 
-    private fun endRunAndSaveToDB(): String {
+    private fun endRunAndSaveToDB() {
 
         try {
             var distanceInMeters = 0
@@ -230,21 +225,21 @@ class TrackingFragment: Fragment(R.layout.fragment_tracking) {
             val caloriesBurn = ((distanceInMeters / 1000f) * weight).toInt()
 
             if(avgSpeed.isInfinite())
-                throw Exception("avgSpeed is infinite")
+                Snackbar.make(requireView(), "avgSpeed is infinite", Snackbar.LENGTH_SHORT).show()
 
             map?.snapshot {bmp ->
                 val run = Run(bmp, dateTimeStamp, avgSpeed, distanceInMeters, curTimeInMillis, caloriesBurn)
                 viewModel.insertRun(run)
 
                 Snackbar.make(requireActivity().findViewById(R.id.rootView), "Run save successfully", Snackbar.LENGTH_LONG).show()
+                stopRun()
             }
 
         }
         catch (ex: Exception){
-            return ex.message.toString()
+            Snackbar.make(requireView(), ex.message.toString(), Snackbar.LENGTH_SHORT).show()
         }
 
-        return SUCCESS
     }
 
     private fun addAllPolyline(){

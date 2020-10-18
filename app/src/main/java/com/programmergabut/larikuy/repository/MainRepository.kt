@@ -1,21 +1,18 @@
 package com.programmergabut.larikuy.repository
 
+import androidx.lifecycle.LiveData
 import com.programmergabut.larikuy.db.Run
-import com.programmergabut.larikuy.db.RunDao
-import javax.inject.Inject
 
-class MainRepository @Inject constructor(
-    val runDao: RunDao
-) {
-    suspend fun insertRun(run: Run) = runDao.insertRun(run)
-    suspend fun deleteRun(run: Run) = runDao.deleteRun(run)
-    fun getAllRunsSortedByDate() = runDao.getAllRunSortedByDate()
-    fun getAllRunsSortedByDistance() = runDao.getAllRunSortedByDistance()
-    fun getAllRunsSortedByTimeInMillis() = runDao.getAllRunSortedByTimeInMillis()
-    fun getAllRunsSortedByAvgSpeed() = runDao.getAllRunSortedByAvgSpeed()
-    fun getAllRunsSortedByCaloriesBurned() = runDao.getAllRunSortedByCaloriesBurn()
-    fun getTotalAvgSpeed() = runDao.getTotaTotalAvgSpeed()
-    fun getTotalDistance() = runDao.getTotalDistance()
-    fun getTotalCaloriesBurn() = runDao.getTotalCaloriesBurn()
-    fun getTotalTimeInMills() = runDao.getTotalTimeInMills()
+interface MainRepository {
+    suspend fun insertRun(run: Run)
+    suspend fun deleteRun(run: Run)
+    fun getAllRunsSortedByDate(): LiveData<List<Run>>
+    fun getAllRunsSortedByDistance(): LiveData<List<Run>>
+    fun getAllRunsSortedByTimeInMillis(): LiveData<List<Run>>
+    fun getAllRunsSortedByAvgSpeed(): LiveData<List<Run>>
+    fun getAllRunsSortedByCaloriesBurned(): LiveData<List<Run>>
+    fun getTotalAvgSpeed(): LiveData<Float>
+    fun getTotalDistance(): LiveData<Int>
+    fun getTotalCaloriesBurn(): LiveData<Int>
+    fun getTotalTimeInMills(): LiveData<Long>
 }

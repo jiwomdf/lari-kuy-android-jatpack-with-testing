@@ -4,12 +4,15 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.room.Room
+import com.programmergabut.larikuy.db.RunDao
 import com.programmergabut.larikuy.db.RunningDatabase
 import com.programmergabut.larikuy.other.Constants.DATABASE_NAME
 import com.programmergabut.larikuy.other.Constants.KEY_FIRST_TIME_TOGGLE
 import com.programmergabut.larikuy.other.Constants.KEY_NAME
 import com.programmergabut.larikuy.other.Constants.KEY_WEIGHT
 import com.programmergabut.larikuy.other.Constants.SHARED_PREFERENCES_NAME
+import com.programmergabut.larikuy.repository.MainRepository
+import com.programmergabut.larikuy.repository.MainRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,6 +33,10 @@ object AppModule {
         RunningDatabase::class.java,
         DATABASE_NAME
     ).build()
+
+    @Singleton
+    @Provides
+    fun provideMainRepository(runDao: RunDao) = MainRepositoryImpl(runDao) as MainRepository
 
     @Singleton
     @Provides
