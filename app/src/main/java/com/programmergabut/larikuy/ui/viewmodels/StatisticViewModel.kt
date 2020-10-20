@@ -2,15 +2,15 @@ package com.programmergabut.larikuy.ui.viewmodels
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
-import com.programmergabut.larikuy.repository.MainRepositoryImpl
+import com.programmergabut.larikuy.repository.MainRepository
 
-class StatisticViewModel @ViewModelInject constructor(mainRepositoryImpl: MainRepositoryImpl): ViewModel() {
+class StatisticViewModel @ViewModelInject constructor(mainRepository: MainRepository): ViewModel() {
 
-    val totalTimeRun = mainRepositoryImpl.getTotalTimeInMills()
-    val totalDistance = mainRepositoryImpl.getTotalDistance()
-    val totalCaloriesBurned = mainRepositoryImpl.getTotalCaloriesBurn()
-    val totalAvgSpeed = mainRepositoryImpl.getTotalAvgSpeed()
+    val totalTimeRun = mainRepository.getTotalTimeInMills()
+    val totalDistance = mainRepository.getTotalDistance()
+    val totalCaloriesBurned = mainRepository.getTotalCaloriesBurn()
+    val totalAvgSpeed = mainRepository.getTotalAvgSpeed()
 
-    val runsSortedByDate = mainRepositoryImpl.getAllRunsSortedByDate()
+    val runsSortedByDate = mainRepository.getAllRunsSortedByDate()
 
 }

@@ -35,14 +35,16 @@ class MainViewModel @ViewModelInject constructor(
         runs.addSource(runsSortedByTimeInMillis) {}
     }
 
-    fun sortRuns(sortType: SortType) = when(sortType){
-        SortType.DATE -> runsSortedByDate.value?.let { runs.value = it }
-        SortType.RUNNING_TIME -> runsSortedByTimeInMillis.value?.let { runs.value = it }
-        SortType.AVG_SPEED -> runsSortedByAvgSpeed.value?.let { runs.value = it }
-        SortType.DISTANCE -> runsSortedByDistance.value?.let { runs.value = it }
-        SortType.CALORIES_BURNED -> runsSortedByCaloriesBurned.value?.let { runs.value = it }
-    }.also {
-        this.sortType = sortType
+    fun sortRuns(sortType: SortType){
+      when(sortType){
+          SortType.DATE -> runsSortedByDate.value?.let { runs.value = it }
+          SortType.RUNNING_TIME -> runsSortedByTimeInMillis.value?.let { runs.value = it }
+          SortType.AVG_SPEED -> runsSortedByAvgSpeed.value?.let { runs.value = it }
+          SortType.DISTANCE -> runsSortedByDistance.value?.let { runs.value = it }
+          SortType.CALORIES_BURNED -> runsSortedByCaloriesBurned.value?.let { runs.value = it }
+      }.also {
+          this.sortType = sortType
+      }
     }
 
     fun insertRun(run: Run) = viewModelScope.launch {
