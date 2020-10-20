@@ -5,4 +5,4 @@ I learning this app by following <br>
 AndroidDevs Youtube Channel tutorial <br>
 https://www.youtube.com/playlist?list=PLQkwcJG4YTCQ6emtoqSZS2FVwZR9FT3BV <br> <br>
 
-And Also I Decide to add some features
+And Also I Decide to add some features and do a Testing
