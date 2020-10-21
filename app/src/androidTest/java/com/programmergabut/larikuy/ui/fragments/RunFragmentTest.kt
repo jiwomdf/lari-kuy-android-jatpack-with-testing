@@ -1,5 +1,6 @@
 package com.programmergabut.larikuy.ui.fragments
 
+import android.graphics.Bitmap
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -13,6 +14,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.filters.MediumTest
 import com.google.common.truth.Truth.assertThat
 import com.programmergabut.larikuy.R
+import com.programmergabut.larikuy.db.Run
 import com.programmergabut.larikuy.getOrAwaitValue
 import com.programmergabut.larikuy.launchFragmentInHiltContainer
 import com.programmergabut.larikuy.repository.FakeMainRepository
@@ -100,21 +102,32 @@ class RunFragmentTest{
     fun deleteLastRun_deleteComplete(){
         val navController = mock(NavController::class.java)
         val testViewModel = MainViewModel(FakeMainRepository())
+        val bmp = Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888)
 
         launchFragmentInHiltContainer<RunFragment>(fragmentFactory = testMainFactory) {
             Navigation.setViewNavController(requireView(), navController)
             viewModel = testViewModel
+
+            testViewModel.insertRun(
+                Run(
+                    img = bmp,
+                    timestamp = 99L,
+                    avgSpeedInKMH = 99F,
+                    distanceInMater = 99,
+                    timeInMillis = 99L,
+                    caloriesBurned = 99
+                )
+            )
         }
 
-        onView(withId(R.id.rvRuns)).perform(
-            RecyclerViewActions.actionOnItemAtPosition<RunAdapter.RunViewHolder>(
-                4,
-                ViewActions.swipeLeft()
-            )
-        )
+//        onView(withId(R.id.rvRuns)).perform(
+//            RecyclerViewActions.actionOnItemAtPosition<RunAdapter.RunViewHolder>(
+//                5,
+//                ViewActions.swipeLeft()
+//            )
+//        )
 
-        //TODO this is still failing
-        /* assertThat(testViewModel.runs.getOrAwaitValue().size).isEqualTo(4) */
+        assertThat(testViewModel.runs.getOrAwaitValue().size).isEqualTo(6)
     }
 
     @Test

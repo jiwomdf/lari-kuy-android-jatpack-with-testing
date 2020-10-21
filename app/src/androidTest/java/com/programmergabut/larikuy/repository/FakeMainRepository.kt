@@ -62,7 +62,6 @@ class FakeMainRepository: MainRepository{
     }
 
     override fun getAllRunsSortedByDate(): LiveData<List<Run>> {
-
         val data = runs.sortedByDescending { it.timestamp }
 
         return MutableLiveData(data)
