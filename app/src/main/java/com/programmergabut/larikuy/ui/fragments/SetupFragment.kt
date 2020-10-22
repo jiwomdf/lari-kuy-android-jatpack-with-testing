@@ -60,7 +60,7 @@ class SetupFragment: Fragment(R.layout.fragment_setup) {
             .apply()
 
         val toolbartext = "Let's Go, $name!"
-        requireActivity().tvToolbarTitle.text = toolbartext
+        activity?.tvToolbarTitle?.text = toolbartext
         return true
     }
 

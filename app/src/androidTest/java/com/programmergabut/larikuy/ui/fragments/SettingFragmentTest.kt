@@ -12,7 +12,9 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.filters.MediumTest
+import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
+import com.programmergabut.larikuy.ActivityHelper
 import com.programmergabut.larikuy.R
 import com.programmergabut.larikuy.launchFragmentInHiltContainer
 import com.programmergabut.larikuy.other.Constants
@@ -20,6 +22,7 @@ import com.programmergabut.larikuy.repository.FakeMainRepository
 import com.programmergabut.larikuy.ui.viewmodels.MainViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Before
 import org.junit.Rule
@@ -79,7 +82,7 @@ class SettingFragmentTest {
     }
 
     @Test
-    fun insertValidData_sharedPrefUpdated(){
+    fun insertValidData_sharedPrefUpdatedAndTitleBarNameChanged(){
         val expectedName = "jiwo"
         val expectedWeight = 55f
         val navController = mock(NavController::class.java)
@@ -95,8 +98,17 @@ class SettingFragmentTest {
         val sharedPrefName = sharedPref.getString(Constants.KEY_NAME, "") ?: ""
         val sharedPrefWeight = sharedPref.getFloat(Constants.KEY_WEIGHT, 0f)
 
+        // assert the sharedPref
         assertThat(sharedPrefName).isEqualTo(expectedName)
         assertThat(sharedPrefWeight).isEqualTo(expectedWeight)
+
+        //TODO we can't test the toolbar text because now we are using HiltTestActivity not the MainActivity
+        /*
+        val activity = ActivityHelper.getCurrentActivity()
+        val toolBarTxt = ActivityHelper.getCurrentActivity()?.tvToolbarTitle?.text.toString()
+
+        //assert toolbar text
+        assertThat(toolBarTxt).isEqualTo("Let's Go $expectedName") */
 
         //TODO test the snackBar message
     }

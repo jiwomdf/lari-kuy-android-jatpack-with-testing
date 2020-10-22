@@ -35,9 +35,9 @@ const val CANCEL_TRACKING_DIALOG_TAG = "CANCEL_TRACKING_DIALOG_TAG"
 const val SUCCESS = "SUCCESS"
 
 @AndroidEntryPoint
-class TrackingFragment: Fragment(R.layout.fragment_tracking) {
-
-    lateinit var viewModel: MainViewModel
+class TrackingFragment(
+    var viewModel: MainViewModel? = null
+): Fragment(R.layout.fragment_tracking) {
 
     private var isTracking = false
     private var pathPoints = mutableListOf<Polyline>()
@@ -63,8 +63,8 @@ class TrackingFragment: Fragment(R.layout.fragment_tracking) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mapView.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
 
+        viewModel = viewModel ?: ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
 
         btnToggleRun.setOnClickListener {
             toggleRun()
@@ -231,7 +231,7 @@ class TrackingFragment: Fragment(R.layout.fragment_tracking) {
 
             map?.snapshot {bmp ->
                 val run = Run(bmp, dateTimeStamp, avgSpeed, distanceInMeters, curTimeInMillis, caloriesBurn)
-                viewModel.insertRun(run)
+                viewModel?.insertRun(run)
 
                 Snackbar.make(requireActivity().findViewById(R.id.rootView), "Run save successfully", Snackbar.LENGTH_LONG).show()
                 stopRun()
