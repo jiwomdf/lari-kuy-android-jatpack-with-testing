@@ -11,14 +11,15 @@ import java.util.concurrent.TimeUnit
 object TrackingUtility {
 
     fun hasLocationPermissions(context: Context) =
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q){
-            EasyPermissions.hasPermissions(context,
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            EasyPermissions.hasPermissions(
+                context,
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             )
-        }
-        else{
-            EasyPermissions.hasPermissions(context,
+        } else {
+            EasyPermissions.hasPermissions(
+                context,
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION
@@ -64,13 +65,10 @@ object TrackingUtility {
         milliseconds -= TimeUnit.SECONDS.toMillis(seconds)
         milliseconds /= 10
 
-        val str = "${if(hours < 10) "0" else ""}$hours:" +
+        return "${if(hours < 10) "0" else ""}$hours:" +
                 "${if(minutes < 10) "0" else ""}$minutes:" +
                 "${if(seconds < 10) "0" else ""}$seconds:" +
                 "${if(milliseconds < 10) "0" else ""}$milliseconds"
-
-        return str
     }
-
 
 }
