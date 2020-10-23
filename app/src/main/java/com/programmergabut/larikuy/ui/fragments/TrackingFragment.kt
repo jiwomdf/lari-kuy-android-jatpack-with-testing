@@ -4,14 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.snackbar.Snackbar
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.material.snackbar.Snackbar
 import com.programmergabut.larikuy.R
 import com.programmergabut.larikuy.db.Run
 import com.programmergabut.larikuy.other.Constants.ACTION_PAUSE_SERVICE
@@ -21,12 +20,12 @@ import com.programmergabut.larikuy.other.Constants.MAP_ZOOM
 import com.programmergabut.larikuy.other.Constants.POLYLINE_COLOR
 import com.programmergabut.larikuy.other.Constants.POLYLINE_WIDTH
 import com.programmergabut.larikuy.other.TrackingUtility
+import com.programmergabut.larikuy.other.showSnackbar
 import com.programmergabut.larikuy.services.Polyline
 import com.programmergabut.larikuy.services.TrackingService
 import com.programmergabut.larikuy.ui.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_tracking.*
-import java.lang.Exception
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.round
@@ -86,8 +85,7 @@ class TrackingFragment(
 
         btnFinishRun.setOnClickListener {
             val msg = zoomToSeeWholeTrack()
-            if(msg != SUCCESS)
-                Snackbar.make(requireView(), msg, Snackbar.LENGTH_SHORT).show()
+            if (msg != SUCCESS) requireView().showSnackbar(msg, Snackbar.LENGTH_SHORT)
 
             endRunAndSaveToDB()
         }
@@ -96,17 +94,17 @@ class TrackingFragment(
     }
 
     private fun subscribeToObservers(){
-        TrackingService.isTracking.observe(viewLifecycleOwner, Observer {
+        TrackingService.isTracking.observe(viewLifecycleOwner, {
             updateTracking(it)
         })
 
-        TrackingService.pathPoints.observe(viewLifecycleOwner, Observer {
+        TrackingService.pathPoints.observe(viewLifecycleOwner, {
             pathPoints = it
             addLatestPolyline()
             moveCameraToUser()
         })
 
-        TrackingService.timeRunInMillis.observe(viewLifecycleOwner, Observer {
+        TrackingService.timeRunInMillis.observe(viewLifecycleOwner, {
             curTimeInMillis = it
             val formattedTime = TrackingUtility.getFormattedStopWatchTime(curTimeInMillis, true)
             tvTimer.text = formattedTime
@@ -226,8 +224,7 @@ class TrackingFragment(
             val dateTimeStamp = Calendar.getInstance().timeInMillis
             val caloriesBurn = ((distanceInMeters / 1000f) * weight).toInt()
 
-            if(avgSpeed.isInfinite())
-                Snackbar.make(requireView(), "avgSpeed is infinite", Snackbar.LENGTH_SHORT).show()
+            if(avgSpeed.isInfinite()) requireView().showSnackbar("avgSpeed is infinite", Snackbar.LENGTH_SHORT)
 
             map?.snapshot {bmp ->
                 val run = Run(bmp, dateTimeStamp, avgSpeed, distanceInMeters, curTimeInMillis, caloriesBurn)
@@ -239,7 +236,7 @@ class TrackingFragment(
 
         }
         catch (ex: Exception){
-            Snackbar.make(requireView(), ex.message.toString(), Snackbar.LENGTH_SHORT).show()
+            requireView().showSnackbar(ex.message.toString(), Snackbar.LENGTH_SHORT)
         }
 
     }

@@ -18,7 +18,7 @@ class RunAdapter : RecyclerView.Adapter<RunAdapter.RunViewHolder>() {
 
     inner class RunViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)
 
-    val diffCallBack = object: DiffUtil.ItemCallback<Run>(){
+    private val diffCallBack = object: DiffUtil.ItemCallback<Run>(){
         override fun areItemsTheSame(oldItem: Run, newItem: Run): Boolean {
             return oldItem.id == newItem.id
         }
@@ -28,7 +28,7 @@ class RunAdapter : RecyclerView.Adapter<RunAdapter.RunViewHolder>() {
         }
     }
 
-    val differ = AsyncListDiffer(this, diffCallBack)
+    private val differ = AsyncListDiffer(this, diffCallBack)
 
     var shoppingItems: List<Run>
         get() = differ.currentList

@@ -3,12 +3,12 @@ package com.programmergabut.larikuy.ui.fragments
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import com.programmergabut.larikuy.R
 import com.programmergabut.larikuy.other.Constants.KEY_NAME
 import com.programmergabut.larikuy.other.Constants.KEY_WEIGHT
+import com.programmergabut.larikuy.other.showSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_setting.*
@@ -27,11 +27,7 @@ class SettingFragment: Fragment(R.layout.fragment_setting) {
 
         btnApplyChanges.setOnClickListener {
             val success = applyChangesToSharePref()
-
-            if(success)
-                Snackbar.make(view, "Saved changes", Snackbar.LENGTH_SHORT).show()
-            else
-                Snackbar.make(view, "Please fill out all the fields", Snackbar.LENGTH_SHORT).show()
+            view.showSnackbar(if (success) "Saved changes" else "Please fill out all the fields", Snackbar.LENGTH_SHORT)
         }
     }
 

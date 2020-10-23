@@ -11,6 +11,7 @@ import com.programmergabut.larikuy.R
 import com.programmergabut.larikuy.other.Constants.KEY_FIRST_TIME_TOGGLE
 import com.programmergabut.larikuy.other.Constants.KEY_NAME
 import com.programmergabut.larikuy.other.Constants.KEY_WEIGHT
+import com.programmergabut.larikuy.other.showSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_setup.*
@@ -39,10 +40,10 @@ class SetupFragment: Fragment(R.layout.fragment_setup) {
         tvContinue.setOnClickListener {
             val success = writePersonalDataToSharedPref()
 
-            if(success)
+            if (success)
                 findNavController().navigate(SetupFragmentDirections.actionSetupFragmentToRunFragment())
             else
-                Snackbar.make(requireView(), "Please enter all the fields", Snackbar.LENGTH_SHORT).show()
+                requireView().showSnackbar("Please enter all the fields", Snackbar.LENGTH_SHORT)
         }
     }
 
