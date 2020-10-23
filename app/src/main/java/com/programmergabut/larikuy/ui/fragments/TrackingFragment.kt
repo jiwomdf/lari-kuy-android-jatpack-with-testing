@@ -3,6 +3,7 @@ package com.programmergabut.larikuy.ui.fragments
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -69,6 +70,7 @@ class TrackingFragment(
             toggleRun()
         }
 
+        /*cancel Tracking Dialog */
         if(savedInstanceState != null){
             val cancelTrackingDialog = parentFragmentManager.findFragmentByTag(
                 CANCEL_TRACKING_DIALOG_TAG) as CancelTrackingDialog?
@@ -89,6 +91,19 @@ class TrackingFragment(
 
             endRunAndSaveToDB()
         }
+
+        /*cancel Tracking Dialog */
+        requireActivity().onBackPressedDispatcher.addCallback(
+            object: OnBackPressedCallback(true){
+                override fun handleOnBackPressed() {
+                    if(isTracking || (!isTracking && curTimeInMillis == 0L))
+                        findNavController().popBackStack()
+
+                    if(!isTracking && curTimeInMillis > 0L)
+                        showCancelTrackingDialog()
+                }
+            }
+        )
 
         subscribeToObservers()
     }

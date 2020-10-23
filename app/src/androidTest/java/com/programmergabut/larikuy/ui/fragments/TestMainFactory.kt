@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import com.programmergabut.larikuy.repository.FakeMainRepository
 import com.programmergabut.larikuy.ui.viewmodels.MainViewModel
+import com.programmergabut.larikuy.ui.viewmodels.StatisticViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 
@@ -17,7 +18,9 @@ class TestMainFactory @Inject constructor(): FragmentFactory() {
             )
             SettingFragment::class.java.name -> SettingFragment()
             SetupFragment::class.java.name -> SetupFragment()
-            StatisticFragment::class.java.name -> StatisticFragment()
+            StatisticFragment::class.java.name -> StatisticFragment(
+                StatisticViewModel(FakeMainRepository())
+            )
             TrackingFragment::class.java.name -> TrackingFragment(
                 MainViewModel(FakeMainRepository())
             )

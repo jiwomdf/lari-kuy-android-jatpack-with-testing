@@ -33,18 +33,18 @@ object TestAppModule {
     fun provideSharedPreferences(@ApplicationContext app: Context): SharedPreferences =
         app.getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
 
-    @Singleton
-    @Provides
-    @Named("test_sharedPref_name")
-    fun provideName(sharedPref: SharedPreferences) = sharedPref.getString(Constants.KEY_NAME, "") ?: ""
-
-    @Singleton
-    @Provides
-    @Named("test_sharedPref_weight")
-    fun provideWeight(sharedPref: SharedPreferences) = sharedPref.getFloat(Constants.KEY_WEIGHT, 55f) ?: 55f
-
-    @Singleton
-    @Provides
-    @Named("test_sharedPref_firstTime")
-    fun provideFirstTimeToggle(sharedPref: SharedPreferences) = sharedPref.getBoolean(Constants.KEY_FIRST_TIME_TOGGLE, true)
+//    @Singleton
+//    @Provides
+//    @Named("test_sharedPref_name")
+//    fun provideName(sharedPref: SharedPreferences) = sharedPref.getString(Constants.KEY_NAME, "") ?: ""
+//
+//    @Singleton
+//    @Provides
+//    @Named("test_sharedPref_weight")
+//    fun provideWeight(sharedPref: SharedPreferences) = sharedPref.getFloat(Constants.KEY_WEIGHT, 55f) ?: 55f
+//
+//    @Singleton
+//    @Provides
+//    @Named("test_sharedPref_firstTime")
+//    fun provideFirstTimeToggle(sharedPref: SharedPreferences) = sharedPref.getBoolean(Constants.KEY_FIRST_TIME_TOGGLE, true)
 }

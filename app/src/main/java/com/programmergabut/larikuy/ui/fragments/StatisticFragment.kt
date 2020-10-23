@@ -19,16 +19,17 @@ import com.programmergabut.larikuy.ui.viewmodels.MainViewModel
 import com.programmergabut.larikuy.ui.viewmodels.StatisticViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_statistic.*
+import javax.inject.Inject
 import kotlin.math.round
 
 @AndroidEntryPoint
-class StatisticFragment: Fragment(R.layout.fragment_statistic) {
-
-    lateinit var viewModel: StatisticViewModel
+class StatisticFragment(
+ var viewModel: StatisticViewModel? = null
+): Fragment(R.layout.fragment_statistic) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(StatisticViewModel::class.java)
+        viewModel = viewModel ?: ViewModelProvider(requireActivity()).get(StatisticViewModel::class.java)
 
         subscribeToObserver()
         setupBarChar()
@@ -64,14 +65,14 @@ class StatisticFragment: Fragment(R.layout.fragment_statistic) {
     }
 
     private fun subscribeToObserver(){
-        viewModel.totalTimeRun.observe(viewLifecycleOwner, Observer {
+        viewModel?.totalTimeRun?.observe(viewLifecycleOwner, Observer {
             it?.let {
                 val totalTimeRun = TrackingUtility.getFormattedStopWatchTime(it)
                 tvTotalTime.text = totalTimeRun
             }
         })
 
-        viewModel.totalDistance.observe(viewLifecycleOwner, Observer {
+        viewModel?.totalDistance?.observe(viewLifecycleOwner, Observer {
             it?.let {
                 val km = it / 1000f
                 val totalDistance = round(km * 10f) /10f
@@ -80,7 +81,7 @@ class StatisticFragment: Fragment(R.layout.fragment_statistic) {
             }
         })
 
-        viewModel.totalAvgSpeed.observe(viewLifecycleOwner, Observer {
+        viewModel?.totalAvgSpeed?.observe(viewLifecycleOwner, Observer {
             it?.let {
                 var speed = 0F
                 if(!it.isInfinite())
@@ -92,14 +93,14 @@ class StatisticFragment: Fragment(R.layout.fragment_statistic) {
             }
         })
 
-        viewModel.totalCaloriesBurned.observe(viewLifecycleOwner, Observer {
+        viewModel?.totalCaloriesBurned?.observe(viewLifecycleOwner, Observer {
             it?.let {
                 val totalCalories = "${it}kcal"
                 tvTotalCalories.text = totalCalories
             }
         })
 
-        viewModel.runsSortedByDate.observe(viewLifecycleOwner, Observer {
+        viewModel?.runsSortedByDate?.observe(viewLifecycleOwner, Observer {
             it?.let {
                 val allAvgSpeed = it.indices.map { i -> BarEntry(i.toFloat(), it[i].avgSpeedInKMH) }
                 val barDataSet = BarDataSet(allAvgSpeed, "Avg Speed Over Time").apply {

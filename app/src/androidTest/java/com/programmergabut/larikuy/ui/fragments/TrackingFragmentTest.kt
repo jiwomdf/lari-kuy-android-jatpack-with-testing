@@ -4,9 +4,9 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.filters.MediumTest
 import com.programmergabut.larikuy.R
@@ -17,11 +17,12 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.hamcrest.CoreMatchers.not
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Mockito
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
 import javax.inject.Inject
 
 @MediumTest
@@ -68,7 +69,7 @@ class TrackingFragmentTest {
         onView(withId(R.id.btnFinishRun)).check(matches(withEffectiveVisibility(Visibility.GONE)))
         onView(withId(R.id.tvTimer)).check(matches(not(withText("00:00:00:00"))))
 
-        //Stop Run
+        //Pause Run
         onView(withId(R.id.btnToggleRun)).perform(click())
         onView(withId(R.id.btnToggleRun)).check(matches(withText("Start")))
         onView(withId(R.id.btnFinishRun)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
@@ -107,6 +108,37 @@ class TrackingFragmentTest {
         onView(withId(R.id.btnToggleRun)).perform(click())
 
         //TODO x button on toolbar cannot be click because we use the HilTestActivity
+    }
+
+    @Test
+    fun testBackPressWhenTrackingRun_navigateToRunFragment(){
+        val navController = mock(NavController::class.java)
+        launchFragmentInHiltContainer<TrackingFragment>(fragmentFactory = testMainFactory) {
+            Navigation.setViewNavController(requireView(), navController)
+        }
+
+        onView(withId(R.id.btnToggleRun)).perform(click())
+
+        Thread.sleep(5000)
+
+        pressBack()
+        verify(navController).popBackStack()
+    }
+
+    @Test
+    fun testBackPressWhenPauseRun_showDialog(){
+        val navController = mock(NavController::class.java)
+        launchFragmentInHiltContainer<TrackingFragment>(fragmentFactory = testMainFactory) {
+            Navigation.setViewNavController(requireView(), navController)
+        }
+
+        onView(withId(R.id.btnToggleRun)).perform(click())
+        Thread.sleep(5000)
+        onView(withId(R.id.btnToggleRun)).perform(click())
+
+        pressBack()
+
+        //TODO show dialog, but how?
     }
 
 
