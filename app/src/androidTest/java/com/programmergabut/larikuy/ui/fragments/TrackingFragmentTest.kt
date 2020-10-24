@@ -11,7 +11,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.filters.MediumTest
 import com.programmergabut.larikuy.R
 import com.programmergabut.larikuy.launchFragmentInHiltContainer
-import com.programmergabut.larikuy.repository.FakeMainRepository
+import com.programmergabut.larikuy.repository.FakeMainRepositoryAndroid
 import com.programmergabut.larikuy.ui.viewmodels.MainViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -20,7 +20,6 @@ import org.hamcrest.CoreMatchers.not
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import javax.inject.Inject
@@ -79,7 +78,7 @@ class TrackingFragmentTest {
     fun testFinishRun_runSavedToDatabase(){
 
         val navController = mock(NavController::class.java)
-        val testViewModel = MainViewModel(FakeMainRepository())
+        val testViewModel = MainViewModel(FakeMainRepositoryAndroid())
         launchFragmentInHiltContainer<TrackingFragment>(fragmentFactory = testMainFactory) {
             Navigation.setViewNavController(requireView(), navController)
             viewModel = testViewModel
@@ -97,7 +96,7 @@ class TrackingFragmentTest {
     @Test
     fun testCancelRun_runNotSavedAndNavigateToRunFragment(){
         val navController = mock(NavController::class.java)
-        val testViewModel = MainViewModel(FakeMainRepository())
+        val testViewModel = MainViewModel(FakeMainRepositoryAndroid())
         launchFragmentInHiltContainer<TrackingFragment>(fragmentFactory = testMainFactory) {
             Navigation.setViewNavController(requireView(), navController)
             viewModel = testViewModel

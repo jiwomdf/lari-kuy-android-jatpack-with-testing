@@ -10,13 +10,11 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.filters.MediumTest
 import com.programmergabut.larikuy.R
 import com.programmergabut.larikuy.launchFragmentInHiltContainer
-import com.programmergabut.larikuy.repository.FakeMainRepository
-import com.programmergabut.larikuy.ui.viewmodels.MainViewModel
+import com.programmergabut.larikuy.repository.FakeMainRepositoryAndroid
 import com.programmergabut.larikuy.ui.viewmodels.StatisticViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -46,7 +44,7 @@ class StatisticFragmentTest {
     @Test
     fun testVisibility_allVisible(){
         val navController = Mockito.mock(NavController::class.java)
-        val testViewModel = StatisticViewModel(FakeMainRepository())
+        val testViewModel = StatisticViewModel(FakeMainRepositoryAndroid())
 
         launchFragmentInHiltContainer<StatisticFragment>(fragmentFactory = testMainFactory) {
             Navigation.setViewNavController(requireView(), navController)

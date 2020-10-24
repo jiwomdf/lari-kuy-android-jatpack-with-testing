@@ -15,9 +15,10 @@ import androidx.test.filters.MediumTest
 import com.google.common.truth.Truth.assertThat
 import com.programmergabut.larikuy.R
 import com.programmergabut.larikuy.db.Run
-import com.programmergabut.larikuy.getOrAwaitValue
+import com.programmergabut.larikuy.getOrAwaitValueAndroidTest
 import com.programmergabut.larikuy.launchFragmentInHiltContainer
-import com.programmergabut.larikuy.repository.FakeMainRepository
+import com.programmergabut.larikuy.other.SortType
+import com.programmergabut.larikuy.repository.FakeMainRepositoryAndroid
 import com.programmergabut.larikuy.ui.adapter.RunAdapter
 import com.programmergabut.larikuy.ui.viewmodels.MainViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -56,7 +57,7 @@ class RunFragmentTest{
     @Test
     fun testVisibility_allVisible(){
 
-        val testViewModel = MainViewModel(FakeMainRepository())
+        val testViewModel = MainViewModel(FakeMainRepositoryAndroid())
         launchFragmentInHiltContainer<RunFragment>(fragmentFactory = testMainFactory) {
             viewModel = testViewModel
         }
@@ -70,7 +71,25 @@ class RunFragmentTest{
     @Test
     fun testScrollRecyclerView_ScrollToEnd() {
 
-        launchFragmentInHiltContainer<RunFragment>(fragmentFactory = testMainFactory) {}
+        val navController = mock(NavController::class.java)
+
+        launchFragmentInHiltContainer<RunFragment>(fragmentFactory = testMainFactory) {
+            Navigation.setViewNavController(requireView(), navController)
+
+            val bmp = Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888)
+            for (i in 1 until 6) {
+                viewModel?.insertRun(
+                    Run(
+                        img = bmp,
+                        timestamp = i.toLong(),
+                        avgSpeedInKMH = i.toFloat(),
+                        distanceInMater = i,
+                        timeInMillis = i.toLong(),
+                        caloriesBurned = i
+                    )
+                )
+            }
+        }
 
         onView(withId(R.id.rvRuns)).perform(
             RecyclerViewActions.actionOnItemAtPosition<RunAdapter.RunViewHolder>(
@@ -83,7 +102,7 @@ class RunFragmentTest{
     @Test
     fun clickFloatingButton_navigateToTrackingFragment(){
         val navController = mock(NavController::class.java)
-        val testViewModel = MainViewModel(FakeMainRepository())
+        val testViewModel = MainViewModel(FakeMainRepositoryAndroid())
 
         launchFragmentInHiltContainer<RunFragment>(fragmentFactory = testMainFactory) {
             Navigation.setViewNavController(requireView(), navController)
@@ -99,16 +118,13 @@ class RunFragmentTest{
     }
 
     @Test
-    fun deleteLastRun_deleteComplete(){
-        val navController = mock(NavController::class.java)
-        val testViewModel = MainViewModel(FakeMainRepository())
+    fun deleteRun_deleteComplete(){
+        var testViewModel: MainViewModel? = null
         val bmp = Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888)
 
         launchFragmentInHiltContainer<RunFragment>(fragmentFactory = testMainFactory) {
-            Navigation.setViewNavController(requireView(), navController)
-            viewModel = testViewModel
-
-            testViewModel.insertRun(
+            testViewModel = viewModel!!
+            viewModel?.insertRun(
                 Run(
                     img = bmp,
                     timestamp = 99L,
@@ -120,14 +136,17 @@ class RunFragmentTest{
             )
         }
 
-//        onView(withId(R.id.rvRuns)).perform(
-//            RecyclerViewActions.actionOnItemAtPosition<RunAdapter.RunViewHolder>(
-//                5,
-//                ViewActions.swipeLeft()
-//            )
-//        )
+        onView(withId(R.id.rvRuns)).perform(
+            RecyclerViewActions.actionOnItemAtPosition<RunAdapter.RunViewHolder>(
+                0,
+                ViewActions.swipeLeft()
+            )
+        )
 
-        assertThat(testViewModel.runs.getOrAwaitValue().size).isEqualTo(6)
+        testViewModel?.sortRuns(SortType.DATE)
+        assertThat(testViewModel?.runs?.getOrAwaitValueAndroidTest()).isEmpty()
+
+        //TODO test snackBar
     }
 
     @Test
@@ -135,18 +154,32 @@ class RunFragmentTest{
 
         val expectedData = mutableListOf(5L, 4L, 3L, 2L, 1L) //this is represent the sorted descending data of timestamp
         val navController = mock(NavController::class.java)
-        val testViewModel = MainViewModel(FakeMainRepository())
+        var testViewModel: MainViewModel? = null
 
         launchFragmentInHiltContainer<RunFragment>(fragmentFactory = testMainFactory) {
             Navigation.setViewNavController(requireView(), navController)
-            viewModel = testViewModel
+            testViewModel = viewModel
+
+            val bmp = Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888)
+            for (i in 1 until 6) {
+                viewModel?.insertRun(
+                    Run(
+                        img = bmp,
+                        timestamp = i.toLong(),
+                        avgSpeedInKMH = i.toFloat(),
+                        distanceInMater = i,
+                        timeInMillis = i.toLong(),
+                        caloriesBurned = i
+                    )
+                )
+            }
         }
 
         onView(withId(R.id.spFilter)).perform(click()) //click on the spinner
         onData(allOf(`is`(instanceOf(String::class.java)), `is`("Date"))).perform(click()) //select spinner which named
 
         val testData = mutableListOf<Long>() //just select the timestamp from the viewModel
-        testViewModel.runs.getOrAwaitValue().forEach {
+        testViewModel?.runs?.getOrAwaitValueAndroidTest()?.forEach {
             testData.add(it.timestamp)
         }
 
@@ -159,20 +192,34 @@ class RunFragmentTest{
 
     @Test
     fun changeSpinnerToSortByRunningTime_runsSortedByRunningTime(){
-        val expectedData = mutableListOf(5L, 4L, 3L, 2L, 1L)
+        val expectedData = mutableListOf(5L, 4L, 3L, 2L, 1L) //this is represent the sorted descending data of timestamp
         val navController = mock(NavController::class.java)
-        val testViewModel = MainViewModel(FakeMainRepository())
+        var testViewModel: MainViewModel? = null
 
         launchFragmentInHiltContainer<RunFragment>(fragmentFactory = testMainFactory) {
             Navigation.setViewNavController(requireView(), navController)
-            viewModel = testViewModel
+            testViewModel = viewModel
+
+            val bmp = Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888)
+            for (i in 1 until 6) {
+                viewModel?.insertRun(
+                    Run(
+                        img = bmp,
+                        timestamp = i.toLong(),
+                        avgSpeedInKMH = i.toFloat(),
+                        distanceInMater = i,
+                        timeInMillis = i.toLong(),
+                        caloriesBurned = i
+                    )
+                )
+            }
         }
 
         onView(withId(R.id.spFilter)).perform(click())
         onData(allOf(`is`(instanceOf(String::class.java)), `is`("Running Time"))).perform(click())
 
         val testData = mutableListOf<Long>()
-        testViewModel.runs.getOrAwaitValue().forEach {
+        testViewModel?.runs?.getOrAwaitValueAndroidTest()?.forEach {
             testData.add(it.timeInMillis)
         }
 
@@ -185,20 +232,34 @@ class RunFragmentTest{
 
     @Test
     fun changeSpinnerToSortByDistance_runsSortedByDistance(){
-        val expectedData = mutableListOf(5L, 4L, 3L, 2L, 1L)
+        val expectedData = mutableListOf(5L, 4L, 3L, 2L, 1L) //this is represent the sorted descending data of timestamp
         val navController = mock(NavController::class.java)
-        val testViewModel = MainViewModel(FakeMainRepository())
+        var testViewModel: MainViewModel? = null
 
         launchFragmentInHiltContainer<RunFragment>(fragmentFactory = testMainFactory) {
             Navigation.setViewNavController(requireView(), navController)
-            viewModel = testViewModel
+            testViewModel = viewModel
+
+            val bmp = Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888)
+            for (i in 1 until 6) {
+                viewModel?.insertRun(
+                    Run(
+                        img = bmp,
+                        timestamp = i.toLong(),
+                        avgSpeedInKMH = i.toFloat(),
+                        distanceInMater = i,
+                        timeInMillis = i.toLong(),
+                        caloriesBurned = i
+                    )
+                )
+            }
         }
 
         onView(withId(R.id.spFilter)).perform(click())
         onData(allOf(`is`(instanceOf(String::class.java)), `is`("Distance"))).perform(click())
 
         val testData = mutableListOf<Long>()
-        testViewModel.runs.getOrAwaitValue().forEach {
+        testViewModel?.runs?.getOrAwaitValueAndroidTest()?.forEach {
             testData.add(it.timeInMillis)
         }
 
@@ -211,20 +272,34 @@ class RunFragmentTest{
 
     @Test
     fun changeSpinnerToSortByAvgSpeed_runsSortedByAvgSpeed(){
-        val expectedData = mutableListOf(5L, 4L, 3L, 2L, 1L)
+        val expectedData = mutableListOf(5L, 4L, 3L, 2L, 1L) //this is represent the sorted descending data of timestamp
         val navController = mock(NavController::class.java)
-        val testViewModel = MainViewModel(FakeMainRepository())
+        var testViewModel: MainViewModel? = null
 
         launchFragmentInHiltContainer<RunFragment>(fragmentFactory = testMainFactory) {
             Navigation.setViewNavController(requireView(), navController)
-            viewModel = testViewModel
+            testViewModel = viewModel
+
+            val bmp = Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888)
+            for (i in 1 until 6) {
+                viewModel?.insertRun(
+                    Run(
+                        img = bmp,
+                        timestamp = i.toLong(),
+                        avgSpeedInKMH = i.toFloat(),
+                        distanceInMater = i,
+                        timeInMillis = i.toLong(),
+                        caloriesBurned = i
+                    )
+                )
+            }
         }
 
         onView(withId(R.id.spFilter)).perform(click())
         onData(allOf(`is`(instanceOf(String::class.java)), `is`("Average Speed"))).perform(click())
 
         val testData = mutableListOf<Long>()
-        testViewModel.runs.getOrAwaitValue().forEach {
+        testViewModel?.runs?.getOrAwaitValueAndroidTest()?.forEach {
             testData.add(it.timeInMillis)
         }
 
@@ -237,20 +312,34 @@ class RunFragmentTest{
 
     @Test
     fun changeSpinnerToSortByCaloriesBurn_runsSortedByCaloriesBurn(){
-        val expectedData = mutableListOf(5L, 4L, 3L, 2L, 1L)
+        val expectedData = mutableListOf(5L, 4L, 3L, 2L, 1L) //this is represent the sorted descending data of timestamp
         val navController = mock(NavController::class.java)
-        val testViewModel = MainViewModel(FakeMainRepository())
+        var testViewModel: MainViewModel? = null
 
         launchFragmentInHiltContainer<RunFragment>(fragmentFactory = testMainFactory) {
             Navigation.setViewNavController(requireView(), navController)
-            viewModel = testViewModel
+            testViewModel = viewModel
+
+            val bmp = Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888)
+            for (i in 1 until 6) {
+                viewModel?.insertRun(
+                    Run(
+                        img = bmp,
+                        timestamp = i.toLong(),
+                        avgSpeedInKMH = i.toFloat(),
+                        distanceInMater = i,
+                        timeInMillis = i.toLong(),
+                        caloriesBurned = i
+                    )
+                )
+            }
         }
 
         onView(withId(R.id.spFilter)).perform(click())
         onData(allOf(`is`(instanceOf(String::class.java)), `is`("Calories Burned"))).perform(click())
 
         val testData = mutableListOf<Long>()
-        testViewModel.runs.getOrAwaitValue().forEach {
+        testViewModel?.runs?.getOrAwaitValueAndroidTest()?.forEach {
             testData.add(it.timeInMillis)
         }
 

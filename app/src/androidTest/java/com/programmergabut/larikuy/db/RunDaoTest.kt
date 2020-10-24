@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.filters.SmallTest
 import com.google.common.truth.Truth.assertThat
-import com.programmergabut.larikuy.getOrAwaitValue
+import com.programmergabut.larikuy.getOrAwaitValueAndroidTest
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -58,7 +58,7 @@ class RunDaoTest {
         )
 
         runDao.insertRun(run)
-        val runsByDate = runDao.getAllRunSortedByDate().getOrAwaitValue()
+        val runsByDate = runDao.getAllRunSortedByDate().getOrAwaitValueAndroidTest()
 
         //Because the bitmap value is always different so we need to exclude it in the comparison
         val runsTestByDate = runsByDate.map { RunsTest(
@@ -96,7 +96,7 @@ class RunDaoTest {
         runDao.insertRun(run)
         runDao.deleteRun(run)
 
-        val runsByDate = runDao.getAllRunSortedByDate().getOrAwaitValue()
+        val runsByDate = runDao.getAllRunSortedByDate().getOrAwaitValueAndroidTest()
 
         //Because the bitmap value is always different so we need to exclude it in the comparison
         val runsTestByDate = runsByDate.map { RunsTest(
@@ -136,7 +136,7 @@ class RunDaoTest {
             runDao.insertRun(run)
         }
 
-        val totalTotalAvgSpeed = runDao.getTotaTotalAvgSpeed().getOrAwaitValue()
+        val totalTotalAvgSpeed = runDao.getTotaTotalAvgSpeed().getOrAwaitValueAndroidTest()
         assertThat(totalTotalAvgSpeed).isEqualTo(expectedData)
     }
 
@@ -158,7 +158,7 @@ class RunDaoTest {
             runDao.insertRun(run)
         }
 
-        val totalDistance = runDao.getTotalDistance().getOrAwaitValue()
+        val totalDistance = runDao.getTotalDistance().getOrAwaitValueAndroidTest()
         assertThat(totalDistance).isEqualTo(expectedData)
     }
 
@@ -180,7 +180,7 @@ class RunDaoTest {
             runDao.insertRun(run)
         }
 
-        val totalCaloriesBurn = runDao.getTotalCaloriesBurn().getOrAwaitValue()
+        val totalCaloriesBurn = runDao.getTotalCaloriesBurn().getOrAwaitValueAndroidTest()
         assertThat(totalCaloriesBurn).isEqualTo(expectedData)
     }
 
@@ -202,7 +202,7 @@ class RunDaoTest {
             runDao.insertRun(run)
         }
 
-        val totalTimeInMills = runDao.getTotalTimeInMills().getOrAwaitValue()
+        val totalTimeInMills = runDao.getTotalTimeInMills().getOrAwaitValueAndroidTest()
         assertThat(totalTimeInMills).isEqualTo(expectedData)
     }
 

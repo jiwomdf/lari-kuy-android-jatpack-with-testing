@@ -4,14 +4,11 @@ import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.programmergabut.larikuy.db.Run
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runBlockingTest
-import kotlinx.coroutines.withContext
 
 @ExperimentalCoroutinesApi
-class FakeMainRepository: MainRepository{
+class FakeMainRepository: MainRepository {
 
     private val runs = mutableListOf<Run>()
     private val observableRunsByDate = MutableLiveData<List<Run>>(runs)
@@ -106,6 +103,4 @@ class FakeMainRepository: MainRepository{
     override fun getTotalTimeInMills(): LiveData<Long> {
         return observableTotalTimeInMills
     }
-
-
 }

@@ -62,7 +62,7 @@ class RunFragment(
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
-        viewModel?.runs?.observe(viewLifecycleOwner, Observer {
+        viewModel?.runs?.observe(viewLifecycleOwner, {
             runAdapter.shoppingItems = it
         })
 
